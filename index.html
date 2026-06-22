@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>바카라 모의체험 · 모바일 원스크린 FINAL</title>
+<style>
+  :root{
+    --bg:#070b14;
+    --bg2:#0b1430;
+    --line:rgba(255,255,255,.14);
+    --txt:#f4f7ff;
+    --muted:#b7c2da;
+    --gold:#ffcc00;
+    --blue:#3b67ff;
+    --red:#ff3b3b;
+    --ok:#39ff88;
+    --shadow: 0 14px 42px rgba(0,0,0,.45);
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    height:100%;
+    margin:0;
+    overflow:hidden;
+    background: radial-gradient(1000px 640px at 50% 0%, #213a7d 0%, var(--bg2) 44%, var(--bg) 100%);
+    color:var(--txt);
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,"Noto Sans KR",sans-serif;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    line-break: strict;
+  }
+
+  .app{
+    height:100dvh;
+    width:100vw;
+    padding:8px;
+    padding-top: calc(8px + env(safe-area-inset-top));
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    overflow:hidden;
+  }
+
+  .build{
+    position:fixed;
+    left:8px; top:8px;
+    z-index:99999;
+    background:var(--gold);
+    color:#000;
+    padding:4px 8px;
+    border-radius:10px;
+    font-weight:900;
+    font-size:10px;
+    letter-spacing:.02em;
+  }
+
+  .hud{
+    display:flex;
+    justify-content:space-between;
+    gap:6px;
+    flex-wrap:wrap;
+    flex:0 0 auto;
+  }
+  .badge{
+    border:1px solid var(--line);
+    background: rgba(20,28,48,.74);
+    border-radius:12px;
+    padding:6px 9px;
+    color:var(--muted);
+    font-weight:900;
+    font-size:12px;
+    white-space:nowrap;
+    backdrop-filter: blur(8px);
+  }
+  .badge b{ color:var(--txt); }
+
+  .panel{
+    flex:1 1 auto;
+    min-height:0;
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.12);
+    background: linear-gradient(180deg, rgba(18,26,48,.92), rgba(8,12,22,.92));
+    box-shadow: var(--shadow);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .bg, .bg * { pointer-events:none !important; }
+  .bg{ position:absolute; inset:0; opacity:.50; mix-blend-mode:screen; }
+  .bg::before{
+    content:"";
+    position:absolute; inset:-30px;
+    background:
+      radial-gradient(540px 220px at 18% 18%, rgba(59,103,255,.18), transparent 60%),
+      radial-gradient(540px 220px at 82% 28%, rgba(255,59,59,.14), transparent 60%),
+      radial-gradient(720px 360px at 50% 78%, rgba(255,204,0,.08), transparent 65%);
+  }
+  .icons{
+    position:absolute; inset:0;
+    opacity:.10;
+    font-size:32px;
+    display:grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 1fr;
+    place-items:center;
+  }
+  .vignette{
+    position:absolute; inset:0;
+    background: radial-gradient(800px 420px at 50% 30%, transparent 40%, rgba(0,0,0,.62) 100%);
+    opacity:.88;
+  }
+
+  .content{
+    position:relative;
+    z-index:2;
+    height:100%;
+    padding:8px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    overflow:hidden; /* ✅ 스크롤 제거 */
+  }
+
+  .strip{
+    flex:0 0 auto;
+    border:1px solid rgba(255,255,255,.12);
+    background: linear-gradient(90deg, rgba(59,103,255,.14), rgba(255,255,255,.03), rgba(255,59,59,.10));
+    border-radius:14px;
+    padding:7px 10px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+  }
+  .strip .t1{ font-weight:1300; font-size:12px; letter-spacing:.01em; }
+  .strip .t2{ color:var(--muted); font-weight:1000; font-size:10px; }
+
+  .box{
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(12,18,34,.74);
+    border-radius:14px;
+    padding:8px;
+    overflow:hidden;
+  }
+
+  .h1{ margin:0; font-size:18px; font-weight:1500; letter-spacing:-0.03em; }
+  .p{ margin:4px 0 0; color:var(--muted); font-weight:900; line-height:1.4; font-size:11px; }
+  .divider{ height:1px; background:rgba(255,255,255,.10); margin:7px 0; }
+
+  .oneLine{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  button{
+    appearance:none;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(24,34,62,.96);
+    color:var(--txt);
+    padding:10px 10px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:1300;
+    font-size:13px;
+    min-height:40px;
+    line-height:1;
+  }
+  button:active{ transform: translateY(1px); }
+  .primary{ border-color: rgba(59,103,255,.95); background: rgba(59,103,255,.22); }
+  .danger{ border-color: rgba(255,59,59,.85); background: rgba(255,59,59,.14); }
+  .ghost{ background: transparent; }
+  .disabled{ opacity:.45 !important; pointer-events:none !important; }
+  .row{ display:flex; gap:6px; flex-wrap:nowrap; }
+  .row > button{ flex:1 1 0; min-width:0; }
+  .selected{
+    border-color: rgba(255,204,0,.78) !important;
+    background: rgba(255,204,0,.16) !important;
+    box-shadow: 0 0 0 2px rgba(255,204,0,.18) inset;
+  }
+
+  /* ===== 원스크린 레이아웃 ===== */
+  .playWrap{
+    flex:1 1 auto;
+    min-height:0;
+    display:grid;
+    grid-template-rows: auto auto;
+    gap:6px;
+  }
+
+  /* LIVE TABLE */
+  .tableArea{
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.18);
+    border-radius:14px;
+    padding:8px;
+    overflow:hidden;
+  }
+  .tableTop{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:6px;
+    margin-bottom:6px;
+  }
+  .tag{
+    font-size:10px;
+    padding:4px 8px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color:var(--muted);
+    font-weight:1100;
+    white-space:nowrap;
+  }
+
+  .seatsGrid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:6px;
+  }
+
+  .seat{
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:12px;
+    padding:6px;
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.10));
+    overflow:hidden;
+  }
+  .seat.win{
+    border-color: rgba(255,204,0,.58);
+    box-shadow: 0 0 0 2px rgba(255,204,0,.16) inset;
+  }
+  .seatHead{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:6px;
+    font-weight:1400;
+    font-size:11px;
+    margin-bottom:5px;
+  }
+  .side{
+    font-size:10px;
+    padding:3px 7px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    color:var(--muted);
+    font-weight:1100;
+    white-space:nowrap;
+  }
+  .side.p{ border-color: rgba(59,103,255,.28); background: rgba(59,103,255,.12); color:#cfe0ff; }
+  .side.b{ border-color: rgba(255,59,59,.22); background: rgba(255,59,59,.10); color:#ffd2d6; }
+
+  .cardsRow{
+    display:flex;
+    gap:4px;
+    justify-content:center;
+    align-items:flex-start;
+    min-height:0;
+    overflow:visible;
+    flex-wrap:nowrap;
+  }
+
+  /* ===== 카드 축소 ===== */
+  .playingCard{
+    width:clamp(36px, 11vw, 54px);
+    height:clamp(52px, 16vw, 78px);
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.22);
+    background:
+      radial-gradient(10px 10px at 25% 20%, rgba(255,255,255,.55), transparent 60%),
+      linear-gradient(180deg, rgba(255,255,255,.98), rgba(230,238,255,.96));
+    color:#0a1020;
+    box-shadow: 0 10px 22px rgba(0,0,0,.30);
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding:6px 6px 7px;
+    flex:0 0 auto;
+  }
+  .pcTop,.pcBot{display:flex; justify-content:space-between; align-items:center; font-weight:1500;}
+  .pcMid{display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:1500; opacity:.95;}
+  .pcBot{transform: rotate(180deg); opacity:.95;}
+  .rank,.suit{font-size:11px}
+  .redSuit{color:#b20f0f;}
+  .blkSuit{color:#0b0f18;}
+
+  .cardBack{
+    width:clamp(36px, 11vw, 54px);
+    height:clamp(52px, 16vw, 78px);
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.18);
+    background:
+      radial-gradient(12px 12px at 20% 30%, rgba(255,255,255,.10), transparent 60%),
+      linear-gradient(135deg, rgba(59,103,255,.28), rgba(255,59,59,.18));
+    box-shadow: 0 10px 22px rgba(0,0,0,.28);
+    position:relative;
+    overflow:hidden;
+    flex:0 0 auto;
+  }
+  .cardBack::before{
+    content:"";
+    position:absolute; inset:8px;
+    border-radius:9px;
+    border:1px dashed rgba(255,255,255,.22);
+  }
+  .cardBack::after{
+    content:"♠ ♥ ♦ ♣";
+    position:absolute;
+    left:4px; right:4px; top:32px;
+    text-align:center;
+    font-weight:1200;
+    font-size:8px;
+    color:rgba(255,255,255,.26);
+    letter-spacing:2px;
+  }
+
+  /* flip */
+  .flipCard{
+    width:clamp(36px, 11vw, 54px);
+    height:clamp(52px, 16vw, 78px);
+    position:relative;
+    perspective:700px;
+    flex:0 0 auto;
+  }
+  .flipInner{
+    width:100%; height:100%;
+    position:relative;
+    transform-style: preserve-3d;
+    transition: transform 700ms cubic-bezier(.2,.9,.2,1);
+  }
+  .flipCard.revealed .flipInner{ transform: rotateY(180deg); }
+  .face{
+    position:absolute; inset:0;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    border-radius:12px;
+  }
+  .face.back{ transform:rotateY(0deg); }
+  .face.front{ transform:rotateY(180deg); }
+
+  .noneSlot{
+    width:clamp(36px, 11vw, 54px);
+    height:clamp(52px, 16vw, 78px);
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:var(--muted);
+    font-weight:1200;
+    font-size:10px;
+    flex:0 0 auto;
+  }
+
+  .scoreBadge{
+    margin-top:4px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:4px;
+    font-size:11px;
+    font-weight:1200;
+    color:var(--muted);
+  }
+  .scoreNum{
+    min-width:28px;
+    text-align:center;
+    padding:3px 8px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background:rgba(255,255,255,.06);
+    color:var(--txt);
+    font-size:14px;
+    font-weight:1500;
+  }
+
+  /* 컨트롤 */
+  .controlBox{
+    display:grid;
+    grid-template-rows:auto auto auto;
+    gap:6px;
+  }
+  .sectionTitle{
+    font-size:11px;
+    font-weight:1300;
+    color:var(--muted);
+    margin-bottom:4px;
+  }
+
+  /* 결과 오버레이 */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.70);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:999;
+  }
+  .overlay.show{ display:flex; }
+  .overlayCard{
+    width:min(94vw, 560px);
+    max-height:88dvh;
+    background:linear-gradient(180deg, rgba(20,28,48,.98), rgba(10,14,24,.98));
+    border-radius:18px;
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow: 0 24px 70px rgba(0,0,0,.70);
+    padding:14px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .ovTitle{ font-weight:1200; color:var(--muted); font-size:12px; }
+  .ovMain{
+    font-size:28px;
+    font-weight:1500;
+    letter-spacing:-0.05em;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-items:baseline;
+  }
+  .pill{
+    font-size:12px;
+    font-weight:1300;
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.16);
+    background:rgba(255,255,255,.07);
+    color:var(--muted);
+    white-space:nowrap;
+  }
+  .pill.ok{ color:var(--ok); border-color: rgba(57,255,136,.40); background: rgba(57,255,136,.12); }
+  .pill.bad{ color:var(--red); border-color: rgba(255,59,59,.40); background: rgba(255,59,59,.12); }
+
+  .winnerBanner{
+    border-radius:14px;
+    padding:10px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.18);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .winnerBanner.player{ border-color: rgba(59,103,255,.50); box-shadow: 0 0 0 2px rgba(59,103,255,.16) inset; }
+  .winnerBanner.banker{ border-color: rgba(255,59,59,.46); box-shadow: 0 0 0 2px rgba(255,59,59,.14) inset; }
+  .winnerBanner.tie{ border-color: rgba(255,204,0,.56); box-shadow: 0 0 0 2px rgba(255,204,0,.16) inset; }
+  .who{
+    font-size:30px;
+    font-weight:1600;
+    line-height:1;
+    padding:6px 10px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    letter-spacing:-0.03em;
+  }
+  .who.player{ border-color: rgba(59,103,255,.40); background: rgba(59,103,255,.14); }
+  .who.banker{ border-color: rgba(255,59,59,.34); background: rgba(255,59,59,.12); }
+  .who.tie{ border-color: rgba(255,204,0,.45); background: rgba(255,204,0,.14); }
+  .scorePill{
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(255,255,255,.06);
+    font-size:13px;
+    font-weight:1200;
+    white-space:nowrap;
+  }
+  .scorePill strong{ font-size:20px; }
+  .ovScroll{ flex:1 1 auto; min-height:0; overflow:auto; }
+  .note{ color:var(--muted); font-size:12px; line-height:1.55; font-weight:900; }
+  .ovBtns{ display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap; }
+
+  @media (max-height: 740px){
+    .build{font-size:9px;padding:3px 7px}
+    .badge{padding:5px 8px;font-size:11px}
+    .strip{padding:6px 8px}
+    .box{padding:7px}
+    .playingCard,.cardBack,.flipCard,.noneSlot{width:clamp(32px,10vw,50px);height:clamp(46px,14.5vw,72px)}
+    .cardsRow{min-height:0;}
+    .pcMid{font-size:21px}
+    .row>button{min-height:36px;font-size:12px;padding:8px 8px}
+    .scoreNum{font-size:13px}
+  }
+</style>
+</head>
+
+<body>
+<div class="build">BUILD · ONE-SCREEN · 2026-02-24</div>
+
+<div class="app">
+  <div class="hud">
+    <div class="badge">R <b id="hudRound">0</b>/<span id="hudTotal">8</span></div>
+    <div class="badge">잔액 <b id="hudMoney">0</b>원</div>
+  </div>
+
+  <div class="panel">
+    <div class="bg" aria-hidden="true"></div>
+    <div class="icons bg" aria-hidden="true">
+      <span>♠</span><span>♥</span><span>♦</span><span>♣</span><span>🎰</span><span>♠</span>
+      <span>♥</span><span>♦</span><span>♣</span><span>🎰</span><span>♠</span><span>♥</span>
+      <span>♦</span><span>♣</span><span>🎰</span><span>♠</span><span>♥</span><span>♦</span>
+      <span>♣</span><span>🎰</span><span>♠</span><span>♥</span><span>♦</span><span>♣</span>
+    </div>
+    <div class="vignette bg" aria-hidden="true"></div>
+
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="overlayCard">
+    <div class="ovTitle" id="ovTitle">결과</div>
+    <div class="ovMain" id="ovMain">-</div>
+
+    <div class="winnerBanner" id="winnerBanner">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span class="pill">승자</span>
+        <span class="who" id="winnerWho">?</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <div class="scorePill" style="border-color:rgba(59,103,255,.28);background:rgba(59,103,255,.12)">P <strong id="pScoreBig">?</strong></div>
+        <div class="scorePill" style="border-color:rgba(255,59,59,.22);background:rgba(255,59,59,.10)">B <strong id="bScoreBig">?</strong></div>
+      </div>
+    </div>
+
+    <div class="ovScroll">
+      <div class="note" id="ovNote"></div>
+    </div>
+
+    <div class="ovBtns">
+      <button class="primary" id="ovNext" onclick="__ovNext()">다음</button>
+      <button class="ghost" id="ovClose" onclick="__ovClose()">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const fmt = (n) => n.toLocaleString("ko-KR");
+
+  const state = {
+    total: 8,
+    round: 0,
+    startMoney: 30000,
+    money: 0,
+    bet: 5000,
+    choice: "BANKER",
+    lock: false,
+    afterOverlay: null
+  };
+  $("hudTotal").textContent = String(state.total);
+
+  function hud(){
+    $("hudRound").textContent = String(Math.min(state.round, state.total));
+    $("hudMoney").textContent = fmt(state.money);
+  }
+
+  const SUITS = [
+    {s:"♠", cls:"blkSuit"},
+    {s:"♥", cls:"redSuit"},
+    {s:"♦", cls:"redSuit"},
+    {s:"♣", cls:"blkSuit"},
+  ];
+  const RANKS = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+  function val(rank){
+    if(rank==="A") return 1;
+    if(rank==="10"||rank==="J"||rank==="Q"||rank==="K") return 0;
+    return Number(rank);
+  }
+  function draw(){
+    const suit = SUITS[Math.floor(Math.random()*SUITS.length)];
+    const rank = RANKS[Math.floor(Math.random()*RANKS.length)];
+    return {rank, suit:suit.s, cls:suit.cls, v:val(rank)};
+  }
+  function total(cards){ return cards.reduce((a,c)=>a+c.v,0) % 10; }
+  function shouldPlayerDraw(p){ return p <= 5; }
+  function shouldBankerDraw(b, pThird){
+    if(!pThird) return b <= 5;
+    const pt = pThird.v;
+    if(b <= 2) return true;
+    if(b === 3) return pt !== 8;
+    if(b === 4) return (pt >= 2 && pt <= 7);
+    if(b === 5) return (pt >= 4 && pt <= 7);
+    if(b === 6) return (pt === 6 || pt === 7);
+    return false;
+  }
+  function decide(p,b){
+    // 3% 승률 조작: 97% 확률로 플레이어 선택 시 뱅커 승리 유도
+    const raw = p>b?"PLAYER": b>p?"BANKER":"TIE";
+    if(state.choice !== "TIE"){
+      // 선택한 쪽이 이기는 경우, 97% 확률로 뒤집기
+      if(raw === state.choice && Math.random() < 0.97){
+        return state.choice === "PLAYER" ? "BANKER" : "PLAYER";
+      }
+    }
+    return raw;
+  }
+  function label(x){
+    if(x==="PLAYER") return "플레이어";
+    if(x==="BANKER") return "뱅커";
+    return "타이";
+  }
+
+  function frontCardHTML(c){
+    return `
+      <div class="playingCard ${c.cls}">
+        <div class="pcTop"><span class="rank">${c.rank}</span><span class="suit">${c.suit}</span></div>
+        <div class="pcMid">${c.suit}</div>
+        <div class="pcBot"><span class="rank">${c.rank}</span><span class="suit">${c.suit}</span></div>
+      </div>
+    `;
+  }
+
+  function flipSlotHTML(slotId){
+    return `
+      <div class="flipCard" id="${slotId}">
+        <div class="flipInner">
+          <div class="face back"><div class="cardBack"></div></div>
+          <div class="face front" data-front></div>
+        </div>
+      </div>
+    `;
+  }
+  function setRowFlipSlots(rowEl, prefix){
+    rowEl.innerHTML = flipSlotHTML(prefix+"0")+flipSlotHTML(prefix+"1")+flipSlotHTML(prefix+"2");
+  }
+  function revealFlip(slotId, cardOrNone){
+    const slot = document.getElementById(slotId);
+    if(!slot) return;
+    const front = slot.querySelector("[data-front]");
+    if(!front) return;
+
+    if(cardOrNone && cardOrNone.type==="NONE"){
+      front.innerHTML = `<div class="noneSlot">없음</div>`;
+    }else{
+      front.innerHTML = frontCardHTML(cardOrNone);
+    }
+    requestAnimationFrame(() => slot.classList.add("revealed"));
+  }
+
+  const overlay = $("overlay");
+  function openOverlay(){
+    overlay.classList.add("show");
+    overlay.setAttribute("aria-hidden","false");
+  }
+  function closeOverlay(){
+    overlay.classList.remove("show");
+    overlay.setAttribute("aria-hidden","true");
+    const fn = state.afterOverlay;
+    state.afterOverlay = null;
+    if(typeof fn === "function") fn();
+  }
+  window.__ovNext = () => closeOverlay();
+  window.__ovClose = () => closeOverlay();
+  overlay.addEventListener("click", (e)=>{ if(e.target===overlay) closeOverlay(); });
+
+  function setWinnerUI(out, pT, bT){
+    $("pScoreBig").textContent = String(pT);
+    $("bScoreBig").textContent = String(bT);
+    const banner = $("winnerBanner");
+    const who = $("winnerWho");
+    banner.classList.remove("player","banker","tie");
+    who.classList.remove("player","banker","tie");
+    if(out==="PLAYER"){ banner.classList.add("player"); who.classList.add("player"); who.textContent="PLAYER"; }
+    else if(out==="BANKER"){ banner.classList.add("banker"); who.classList.add("banker"); who.textContent="BANKER"; }
+    else { banner.classList.add("tie"); who.classList.add("tie"); who.textContent="TIE"; }
+  }
+
+  const content = $("content");
+
+  const QUIZ = [
+    { q:"도박은 실력이 좋으면 꾸준히 이길 수 있다.", answer: false },
+    { q:"온라인 도박은 불법이 아닌 경우도 있으니 괜찮다.", answer: false },
+    { q:"도박 중독은 의지만 있으면 혼자서도 쉽게 끊을 수 있다.", answer: false },
+  ];
+  const quizAnswers = [];
+
+  function renderQuiz(idx){
+    if(idx >= QUIZ.length){
+      renderHome();
+      return;
+    }
+    const q = QUIZ[idx];
+    content.innerHTML = `
+      <div class="strip">
+        <div class="t1">사전 퀴즈 ${idx+1}/${QUIZ.length}</div>
+        <div class="t2 oneLine">체험 전 내 생각은?</div>
+      </div>
+      <div class="box" style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;">
+        <div class="h1" style="font-size:15px;line-height:1.5;">${q.q}</div>
+        <div class="row" style="margin-top:8px">
+          <button class="primary" id="qO">O (맞다)</button>
+          <button class="danger" id="qX">X (틀리다)</button>
+        </div>
+      </div>
+    `;
+    function handleAnswer(selected){
+      quizAnswers.push(selected);
+      const correct = selected === q.answer;
+      const msg = correct
+        ? "✅ 정답! " + (q.answer ? "맞습니다." : "도박의 실체를 잘 알고 있네요.")
+        : "❌ 오답. " + getExplain(idx);
+      content.innerHTML = `
+        <div class="strip">
+          <div class="t1">사전 퀴즈 ${idx+1}/${QUIZ.length}</div>
+          <div class="t2 oneLine">체험 전 내 생각은?</div>
+        </div>
+        <div class="box" style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:14px;">
+          <div class="h1" style="font-size:15px;line-height:1.5;">${q.q}</div>
+          <div class="p" style="font-size:13px;color:${correct?'var(--ok)':'var(--red)'};">${msg}</div>
+          <div class="row" style="margin-top:8px">
+            <button class="primary" id="qNext">다음</button>
+          </div>
+        </div>
+      `;
+      $("qNext").onclick = () => renderQuiz(idx+1);
+    }
+    $("qO").onclick = () => handleAnswer(true);
+    $("qX").onclick = () => handleAnswer(false);
+  }
+
+  function getExplain(idx){
+    const explains = [
+      "도박은 운에 의존하며, 장기적으로 반드시 잃도록 설계되어 있습니다.",
+      "온라인 도박은 국내에서 원칙적으로 모두 불법입니다.",
+      "도박 중독은 뇌의 보상 회로가 변형되는 질병으로, 전문 치료가 필요합니다.",
+    ];
+    return explains[idx] || "";
+  }
+
+  function renderHome(){
+    state.round = 0;
+    state.money = 0;
+    state.bet = 5000;
+    state.choice = "BANKER";
+    state.lock = false;
+    hud();
+
+    content.innerHTML = `
+      <div class="strip">
+        <div class="t1">바카라 모의체험</div>
+        <div class="t2 oneLine">한 화면 최적화</div>
+      </div>
+
+      <div class="box" style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px;">
+        <div class="h1">시작</div>
+        <div class="p">점수는 0~9, 10 이상이면 앞자리 버림.</div>
+        <div class="row" style="margin-top:6px">
+          <button class="primary" id="btnStart" onclick="__start()">사전 퀴즈 풀고 시작</button>
+        </div>
+      </div>
+    `;
+    $("btnStart")?.addEventListener("click", () => { quizAnswers.length=0; renderQuiz(0); });
+  }
+  window.__start = () => { quizAnswers.length=0; renderQuiz(0); };
+
+  function startGame(){
+    state.round = 1;
+    state.money = state.startMoney;
+    state.bet = 5000;
+    state.choice = "BANKER";
+    state.lock = false;
+    hud();
+    renderPlay();
+  }
+
+  function renderPlay(){
+    const cP = state.choice==="PLAYER" ? "selected" : "";
+    const cB = state.choice==="BANKER" ? "selected" : "";
+    const cT = state.choice==="TIE" ? "selected" : "";
+
+    const b3 = state.bet===3000 ? "selected" : "";
+    const b5 = state.bet===5000 ? "selected" : "";
+    const b10 = state.bet===10000 ? "selected" : "";
+    const b20 = state.bet===20000 ? "selected" : "";
+
+    content.innerHTML = `
+      <div class="strip">
+        <div class="t1">Round ${state.round}/${state.total}</div>
+        <div class="t2 oneLine">양쪽 한눈에</div>
+      </div>
+
+      <div class="playWrap">
+        <div class="box" style="min-height:0;">
+          <div class="tableArea">
+            <div class="tableTop">
+              <div class="tag">LIVE</div>
+              <div class="tag">${label(state.choice)} · ${fmt(state.bet)}원</div>
+            </div>
+
+            <div class="seatsGrid">
+              <div class="seat" id="seatP">
+                <div class="seatHead"><span>PLAYER</span><span class="side p">왼쪽</span></div>
+                <div class="cardsRow" id="rowP"></div>
+                <div class="scoreBadge">점수 <span class="scoreNum" id="pScore">?</span></div>
+              </div>
+
+              <div class="seat" id="seatB">
+                <div class="seatHead"><span>BANKER</span><span class="side b">오른쪽</span></div>
+                <div class="cardsRow" id="rowB"></div>
+                <div class="scoreBadge">점수 <span class="scoreNum" id="bScore">?</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="box controlBox">
+          <div>
+            <div class="sectionTitle">선택</div>
+            <div class="row">
+              <button id="cP" class="${cP}">플레이어</button>
+              <button id="cB" class="${cB}">뱅커</button>
+              <button id="cT" class="${cT}">타이</button>
+            </div>
+          </div>
+
+          <div>
+            <div class="sectionTitle">베팅</div>
+            <div class="row">
+              <button id="b3" class="${b3}">3천</button>
+              <button id="b5" class="${b5}">5천</button>
+              <button id="b10" class="${b10}">1만</button>
+              <button id="b20" class="${b20}">2만</button>
+            </div>
+          </div>
+
+          <div class="row">
+            <button class="primary ${state.lock?'disabled':''}" id="spin">SPIN</button>
+            <button class="danger ${state.lock?'disabled':''}" id="stop">끝내기</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    setRowFlipSlots($("rowP"), "p_");
+    setRowFlipSlots($("rowB"), "b_");
+
+    if(!state.lock){
+      $("cP").onclick = () => { state.choice="PLAYER"; renderPlay(); };
+      $("cB").onclick = () => { state.choice="BANKER"; renderPlay(); };
+      $("cT").onclick = () => { state.choice="TIE"; renderPlay(); };
+
+      $("b3").onclick = () => { state.bet=3000; renderPlay(); };
+      $("b5").onclick = () => { state.bet=5000; renderPlay(); };
+      $("b10").onclick = () => { state.bet=10000; renderPlay(); };
+      $("b20").onclick = () => { state.bet=20000; renderPlay(); };
+    }
+
+    $("spin").onclick = () => spin();
+    $("stop").onclick = () => renderEnd();
+  }
+
+  function spin(){
+    if(state.lock) return;
+
+    if(state.bet > state.money){
+      $("ovTitle").textContent = "잔액 부족";
+      $("ovMain").innerHTML = `<span class="pill bad">중단</span><span style="color:var(--red);font-weight:1400">베팅 불가</span>`;
+      $("ovNote").innerHTML = `<div class="note">베팅 금액을 낮춰줘.</div>`;
+      setWinnerUI("TIE","?","?");
+      $("ovNext").textContent = "확인";
+      state.afterOverlay = null;
+      openOverlay();
+      return;
+    }
+
+    state.lock = true;
+    state.money -= state.bet;
+    hud();
+    renderPlay();
+
+    const p = [draw(), draw()];
+    const b = [draw(), draw()];
+    let pT = total(p);
+    let bT = total(b);
+
+    const natural = (pT>=8 || bT>=8);
+    let pThird = null;
+
+    if(!natural){
+      if(shouldPlayerDraw(pT)){
+        pThird = draw();
+        p.push(pThird);
+        pT = total(p);
+      }
+      if(shouldBankerDraw(bT, pThird)){
+        b.push(draw());
+        bT = total(b);
+      }
+    }
+
+    const out = decide(pT,bT);
+
+    $("pScore").textContent = "?";
+    $("bScore").textContent = "?";
+    $("seatP").classList.remove("win");
+    $("seatB").classList.remove("win");
+
+    const t = {
+      p1: 500,
+      p2: 1000,
+      b1: 1500,
+      b2: 2000,
+      p3: 2500,
+      b3: 3000,
+      score: 3400,
+      result: 3900
+    };
+
+    setTimeout(()=>revealFlip("p_0", p[0]), t.p1);
+    setTimeout(()=>revealFlip("p_1", p[1]), t.p2);
+    setTimeout(()=>revealFlip("b_0", b[0]), t.b1);
+    setTimeout(()=>revealFlip("b_1", b[1]), t.b2);
+
+    setTimeout(()=>{ if(p.length===3) revealFlip("p_2", p[2]); else revealFlip("p_2", {type:"NONE"}); }, t.p3);
+    setTimeout(()=>{ if(b.length===3) revealFlip("b_2", b[2]); else revealFlip("b_2", {type:"NONE"}); }, t.b3);
+
+    setTimeout(()=>{
+      $("pScore").textContent = String(pT);
+      $("bScore").textContent = String(bT);
+      if(out==="PLAYER") $("seatP").classList.add("win");
+      if(out==="BANKER") $("seatB").classList.add("win");
+      if(out==="TIE"){ $("seatP").classList.add("win"); $("seatB").classList.add("win"); }
+    }, t.score);
+
+    setTimeout(()=>{
+      const choice = state.choice;
+      let delta = -state.bet;
+      let win = false;
+      let subtitle = "";
+
+      if(out==="TIE"){
+        if(choice==="TIE"){
+          win = true;
+          delta = state.bet * 8;
+          state.money += state.bet + delta;
+          subtitle = "타이 적중";
+        }else{
+          win = true;
+          delta = 0;
+          state.money += state.bet;
+          subtitle = "타이";
+        }
+      }else{
+        if(choice===out){
+          win = true;
+          delta = state.bet;
+          state.money += state.bet + delta;
+          subtitle = `${label(out)} 적중`;
+        }else{
+          win = false;
+          delta = -state.bet;
+          subtitle = `${label(out)} 승리`;
+        }
+      }
+
+      hud();
+
+      const pill = win ? `<span class="pill ok">적중</span>` : `<span class="pill bad">빗나감</span>`;
+      const sign = delta>=0 ? "+" : "-";
+      const abs = Math.abs(delta);
+
+      $("ovTitle").textContent = `라운드 ${state.round}/${state.total} · 결과`;
+      $("ovMain").innerHTML = `${pill}<span style="color:${win?'var(--ok)':'var(--red)'};font-weight:1500">${sign}${fmt(abs)}원</span>`;
+      setWinnerUI(out, pT, bT);
+
+      $("ovNote").innerHTML = `
+        <div class="note">
+          선택: <b>${label(choice)}</b> · 결과: <b>${label(out)}</b> · ${subtitle}<br>
+          현재 잔액: <b>${fmt(state.money)}원</b>
+        </div>
+      `;
+
+      $("ovNext").textContent = (state.round >= state.total) ? "마지막 공개" : "다음";
+      state.afterOverlay = () => {
+        state.round++;
+        state.lock = false;
+        if(state.round > state.total) renderEnd();
+        else renderPlay();
+      };
+      openOverlay();
+    }, t.result);
+  }
+
+  function renderEnd(){
+    state.lock = false;
+    const lost = state.startMoney - state.money;
+    const laborWage = 10030; // 2024 최저시급
+    const lostHours = lost > 0 ? (lost / laborWage).toFixed(1) : 0;
+    const lostMin = lost > 0 ? Math.round(lost / laborWage * 60) : 0;
+    const lostText = lost > 0
+      ? `편의점 알바 <b style="color:var(--red)">${lostHours}시간(${lostMin}분)</b> 치`
+      : `<span style="color:var(--ok)">수익 발생 (극히 드문 경우)</span>`;
+
+    content.innerHTML = `
+      <div class="strip">
+        <div class="t1">체험 종료</div>
+        <div class="t2 oneLine">승자만 보이면 다 이기는 것처럼 보인다</div>
+      </div>
+
+      <div class="box" style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px;overflow:auto;">
+        <div class="h1">왜 다수가 잃는가</div>
+        <div class="p">1) 승자만 보임</div>
+        <div class="p">2) 복구 심리 ("한 판만 더")</div>
+        <div class="p">3) 과신 — 이길 것 같은 착각</div>
+        <div class="p">4) 판은 다수 손실로 유지됨</div>
+        <div class="divider"></div>
+        <div class="p"><b>최종 잔액:</b> ${fmt(state.money)}원</div>
+        <div class="p"><b>잃은 금액:</b> ${fmt(Math.max(0,lost))}원 → ${lostText}</div>
+        <div class="divider"></div>
+        <div style="border:1px solid rgba(255,59,59,.50);border-radius:12px;padding:10px;background:rgba(255,59,59,.10);text-align:center;">
+          <div style="font-size:13px;font-weight:1500;color:var(--red);letter-spacing:-0.01em;">🚨 도박은 범죄입니다</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5;">불법 도박 참여 시 형사처벌 대상<br>도박 문제 상담 ☎ 1336 (무료·24시간)</div>
+        </div>
+        <div class="row" style="margin-top:6px">
+          <button class="primary" id="replay">다시 체험</button>
+          <button class="ghost" id="home">메인</button>
+        </div>
+      </div>
+    `;
+    $("replay").onclick = () => startGame();
+    $("home").onclick = () => renderHome();
+  }
+
+  renderHome();
+  hud();
+})();
+</script>
+</body>
+</html>
